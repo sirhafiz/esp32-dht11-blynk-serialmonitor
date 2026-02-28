@@ -1,0 +1,38 @@
+#define BLYNK_TEMPLATE_ID   "TEMPLATE_ID"   // Ganti ID kau
+#define BLYNK_TEMPLATE_NAME "TEMPLATE_NAME"
+#define BLYNK_AUTH_TOKEN    "AUTH_TOKEN"  // Token Blynk kau
+
+#include <WiFi.h>
+#include <BlynkSimpleEsp32.h>
+#include <DHT.h>
+
+#define DHTPIN 4
+#define DHTTYPE DHT11
+
+char ssid[] = "wifi name";
+char pass[] = "passord wifi";
+
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup() {
+  Serial.begin(115200);
+  dht.begin();
+  Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
+}
+
+void loop() {
+  Blynk.run();
+
+  float suhu = dht.readTemperature();
+  float kelembapan = dht.readHumidity();
+
+  if (!isnan(suhu) && !isnan(kelembapan)) {
+    Serial.print("Suhu: "); Serial.print(suhu); Serial.print(" °C | ");
+    Serial.print("Kelembapan: "); Serial.print(kelembapan); Serial.println(" %");
+
+    Blynk.virtualWrite(V0, suhu);
+    Blynk.virtualWrite(V1, kelembapan);
+  }
+
+  delay(2000);
+}
