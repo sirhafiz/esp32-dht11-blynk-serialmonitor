@@ -2,6 +2,7 @@
 #define BLYNK_TEMPLATE_NAME "TEMPLATE_NAME"
 #define BLYNK_AUTH_TOKEN    "AUTH_TOKEN"  // Token Blynk kau
 
+
 #include <WiFi.h>
 #include <BlynkSimpleEsp32.h>
 #include <DHT.h>
@@ -9,8 +10,8 @@
 #define DHTPIN 4
 #define DHTTYPE DHT11
 
-char ssid[] = "HafizTM 2.4GHz";  //nama wifi kau
-char pass[] = "h@f1z5335";        //pssword wifi kau
+char ssid[] = "nama wifi";  //nama wifi kau
+char pass[] = "pssword wifi";        //pssword wifi kau
 
 DHT dht(DHTPIN, DHTTYPE);         //pin dan jenis sensor
 
@@ -26,8 +27,11 @@ void loop() {
   float suhu = dht.readTemperature();
   float kelembapan = dht.readHumidity();
 
-  if (!isnan(suhu) && !isnan(kelembapan)) { //cek suhu dan kelembapan samada ada nilai atau tidak
-    //papar bacaan di serial monitor
+  if (isnan(suhu) && isnan(kelembapan)) { //cek suhu dan kelembapan bukan nilai bacaan
+      Serial.print("Gagal baca sensor, cek sensor /wiring"); //print Gagal baca sensor
+  }else{
+
+    //berjaya baca, papar bacaan di serial monitor
     Serial.print("Suhu: "); 
     Serial.print(suhu); 
     Serial.print(" °C | ");
@@ -38,9 +42,7 @@ void loop() {
     //papar bacaan di gauge blynk
     Blynk.virtualWrite(V0, suhu);
     Blynk.virtualWrite(V1, kelembapan);
-  }else{
-    Serial.print("Gagal baca sensor"); //Gagal baca sensor
   }
 
-  delay(2000); //tunggu 2 saat buat bacaan
+  delay(2000);
 }
